@@ -5,7 +5,7 @@ from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
 #Number of rows to skip from the top (the older data)
-toprow = 7000
+toprow = 1000
 #read the data into a DataFrame
 sp500_data = pd.read_csv('sp500.csv', index_col='Date', parse_dates=True, skiprows=[i for i in range(1,toprow+1)])
 
@@ -26,20 +26,20 @@ number_rows = len(sp500_data.index)
 #Principal value
 dollar = 100
 
-#Appreciation/Depreciation value
-assumed_A_D_val = 5
+#Dollar value assumed for trade
+assumed_trade_val = 5
 
 #Store the adjusted closing value of the day in a list
 adj_closing_val_list = sp500_data['Adj Close']
 
 init_dollar = dollar
-#Perform the investment strategy
+#Perform the trade strategy
 for i in range(number_rows-1):
     slope = adj_closing_val_list[i+1] - adj_closing_val_list[i]
     if slope > 0:
-        dollar += assumed_A_D_val
+        dollar += assumed_trade_val
     elif slope < 0:
-        dollar -= assumed_A_D_val
+        dollar -= assumed_trade_val
     else:
         dollar = dollar
 
