@@ -29,47 +29,49 @@ print("Number of days in the index market: " + str(num_rows), end='\n\n')
 #Starting value for the investment
 init_dollars = [100.00, 600.00, 1100.00, 1600.00, 2100.00, 2600.00, 3100.00, 3600.00, 4100.00, 4600.00,\
      5100.00, 5600.00, 6100.00, 6600.00, 7100.00, 7600.00, 8100.00, 8600.00, 9100.00, 9600.00, 10100.00]
-dollars = []
-print()
+#dollars = []
+#print()
 
 #Dollar value assumed for trade (a specified percentage of each initial dollar)
-assumed_trade_units = []
-for k,_ in enumerate(init_dollars):
-    assumed_trade_units.append(0.1*init_dollars[k])
+#assumed_trade_units = []
+#for k,_ in enumerate(init_dollars):
+    #assumed_trade_units.append(0.1*init_dollars[k])
 
 
 #The dollar value of the trade bin, which contains the dollars that are used for buying and selling
-trade_dollars = []
+#trade_dollars = []
 
-tot_num_trades = []
+#tot_num_trades = []
 
 #Store the adjusted closing value of the day in a list
 adj_closing_val_list = sp500_data['Adj Close']
 
-for i,_ in enumerate(init_dollars):
-    val1, val2, val3 = stg.loc_min_max_stg(num_rows, init_dollars[i], adj_closing_val_list, assumed_trade_units[i])
+fixed_dollars, trade_dollars, tot_num_trades = stg.loc_min_max_allinnout_stg(num_rows, init_dollars[0], adj_closing_val_list)
+
+#for i,_ in enumerate(init_dollars):
+    #val1, val2, val3 = stg.loc_min_max_stg(num_rows, init_dollars[i], adj_closing_val_list, assumed_trade_units[i])
     #val1, val2, val3 = stg.index_val_sign_2pts_stg(num_rows, init_dollars[i], adj_closing_val_list, assumed_trade_units[i])
-    dollars.append(round(val1,2))
-    trade_dollars.append(round(val2,2))
-    tot_num_trades.append(val3)
+    #dollars.append(round(val1,2))
+    #trade_dollars.append(round(val2,2))
+    #tot_num_trades.append(val3)
 
 #Calculate the final value of each initial dollar value invested in the index without doing any trade
-tot_dollars_woutrade = [round(j*(adj_closing_val_list[num_rows-1]/adj_closing_val_list[2]),2) for j in init_dollars]
+#tot_dollars_woutrade = [round(j*(adj_closing_val_list[num_rows-1]/adj_closing_val_list[2]),2) for j in init_dollars]
 #Calculate the final value plus trade cash of each initial dollar value invested in the index with the adopted trading strategy
-tot_dollars_wtrade = [sum(x) for x in zip(dollars, trade_dollars)]
+#tot_dollars_wtrade = [sum(x) for x in zip(dollars, trade_dollars)]
 
 f2 = plt.figure(figsize=(12,6))
-line1 = plt.plot(init_dollars, tot_dollars_woutrade, 'bs', label="Investment without trade")
-line2 = plt.plot(init_dollars, tot_dollars_wtrade, 'g^', label="Investment with trade")
-line3 = plt.plot(init_dollars, trade_dollars, 'k', label="Cash for trading")
-line4 = plt.plot(init_dollars, tot_num_trades, 'r--', label="Number of times traded the index")
+line1 = plt.plot([j for j in range(1,tot_num_trades+1)], fixed_dollars, 'k', label="Investment without trade")
+line2 = plt.plot([j for j in range(1,tot_num_trades+1)], trade_dollars, 'r--', label="Investment with trade")
+#line3 = plt.plot(init_dollars, trade_dollars, 'k', label="Cash for trading")
+#line4 = plt.plot(init_dollars, tot_num_trades, 'r--', label="Number of times traded the index")
 plt.legend(loc='upper left')
-plt.title("The final value of the investments (with and without trade) against the initial values at the beginning for {} days.\
-\nHere the strategy is the local extrema with three data points.".format(num_rows))
-plt.xlabel("Investment initial values")
-plt.ylabel("Investment final values")
-plt.yticks(np.arange(10, 25000, 2010))
-plt.xticks(np.arange(100, 10200, 1000))
+plt.title("The final value of the investments (with and without trade) against time for {} days into past.\
+\nHere the strategy is the local extrema with three data points and the data is captured at trade events".format(num_rows))
+plt.xlabel("Time (not a true representation)")
+plt.ylabel("Dollars")
+#plt.yticks(np.arange(80, 160, 10))
+#plt.xlim(0,100)
 plt.grid(True)
 f2.savefig('local_extrema_3pts_{}yr(s)_plot.pdf'.format(int(num_rows/365)), bbox_inches='tight')
 
