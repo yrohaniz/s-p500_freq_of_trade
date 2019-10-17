@@ -7,9 +7,10 @@ register_matplotlib_converters()
 import strategy as stg
 
 #Number of rows to skip from the top (the older data)
-toprow = int(input("Please specify the number of days from the past you would like to skip? "))
+prior_days = int(input("Please specify the number of days from the past you would like to skip? "))
 #read the data into a DataFrame
-sp500_data = pd.read_csv('sp500.csv', index_col='Date', parse_dates=True, skiprows=[i for i in range(1,toprow+1)])
+skip_list = [i for i in range(1,prior_days+1)] #number of rows (days) to skip from the past in the data
+sp500_data = pd.read_csv('sp500.csv', index_col='Date', parse_dates=True, skiprows=skip_list)
 
 #print the last 5 rows in the DataFrame and its number of rows and columns
 print(sp500_data.tail(), end='\n\n')
