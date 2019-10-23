@@ -47,7 +47,15 @@ init_dollars = [100.00, 600.00, 1100.00, 1600.00, 2100.00, 2600.00, 3100.00, 360
 #Store the adjusted closing value of the day in a list
 adj_closing_val_list = sp500_data['Adj Close']
 
-fixed_dollars, trade_dollars, tot_num_trades = stg.loc_min_max_allinnout_stg(num_rows, init_dollars[0], adj_closing_val_list)
+n = 14 #Number of days to wait between trades
+
+#for n in range(2, 100, 2):
+    #fixed_dollars, trade_dollars, tot_num_trades = stg.index_val_sign_npts_stg(n, num_rows, init_dollars[0], adj_closing_val_list)
+    #if (fixed_dollars < trade_dollars):
+       # print(n)
+
+#fixed_dollars, trade_dollars, tot_num_trades = stg.loc_min_max_allinnout_stg(num_rows, init_dollars[0], adj_closing_val_list)
+fixed_dollars, trade_dollars, tot_num_trades = stg.index_val_sign_npts_stg(n, num_rows, init_dollars[0], adj_closing_val_list)
 
 #for i,_ in enumerate(init_dollars):
     #val1, val2, val3 = stg.loc_min_max_stg(num_rows, init_dollars[i], adj_closing_val_list, assumed_trade_units[i])
@@ -62,8 +70,8 @@ fixed_dollars, trade_dollars, tot_num_trades = stg.loc_min_max_allinnout_stg(num
 #tot_dollars_wtrade = [sum(x) for x in zip(dollars, trade_dollars)]
 
 f2 = plt.figure(figsize=(12,6))
-line1 = plt.plot([j for j in range(1,tot_num_trades+1)], fixed_dollars, 'k', label="Investment without trade")
-line2 = plt.plot([j for j in range(1,tot_num_trades+1)], trade_dollars, 'r--', label="Investment with trade")
+line1 = plt.plot([j for j in range(num_rows-n)], fixed_dollars, 'k', label="Investment without trade")
+line2 = plt.plot([j for j in range(num_rows-n)], trade_dollars, 'r--', label="Investment with trade")
 #line3 = plt.plot(init_dollars, trade_dollars, 'k', label="Cash for trading")
 #line4 = plt.plot(init_dollars, tot_num_trades, 'r--', label="Number of times traded the index")
 plt.legend(loc='upper left')
